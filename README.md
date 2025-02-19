@@ -53,6 +53,29 @@ models:
           - unique
           - not_null
 ```
+## Branch: `cron`
+### Objective:
+Run an task on a specific moment or on a periodic way.
+* First step, install `cron` on docker container and copy the `bash` file on the working directory
+```Dockerfile
+FROM python:3.8-slim
 
+RUN apt-get update && apt-get install -y postgresql-client cron
+
+COPY start.sh /app/start.sh
+COPY elt_script.py .
+
+WORKDIR /app
+
+RUN echo "0 3 * * * python /app/elt_script.py" | crontab -
+
+CMD ["python", "elt_script.py"]
+```
+* Second step, create the `bash` (so this gonna run on background )
+```bash
+cron &
+
+python /app/elt_script.py
+```
 # References:
 * https://github.com/justinbchau/custom-elt-project/tree/main
