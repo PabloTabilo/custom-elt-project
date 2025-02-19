@@ -24,4 +24,35 @@ The purpose of this project is to understand how data engineers work with data a
         * A third Docker container running a Python script that manages the entire ELT process.
 * In `docker-compose.yaml`, we define the two PostgreSQL containers and configure the ELT container, where the `elt/Dockerfile` specifies the environment needed to run the ELT script.
 
+## Branch: `dbt`
+### Objective:
+Ok, now we create the `models` directory and the `macros` directory.
+* we provide a clean, tranformed data ready for analysis.
+* Macros and jinja for build reusable and modular code.
+```sql
+{% macro generate_ratings() %}
+CASE
+    WHEN user_rating >= 4.5 THEN 'Excellent'
+    WHEN user_rating >= 4.0 THEN 'Good'
+    WHEN user_rating >= 3.0 THEN 'Average'
+    ELSE 'Poor'
+END as rating_category
+{% endmacro %}
+```
+* Perform automatic testing
+```yaml
+version: 2
 
+models:
+  - name: films
+    description: "This table contains details about films"
+    columns:
+      - name: film_id
+        description: "Unique identifier for the film."
+        tests:
+          - unique
+          - not_null
+```
+
+# References:
+* https://github.com/justinbchau/custom-elt-project/tree/main
